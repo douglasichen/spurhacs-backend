@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
+import { geminiDiagnosis } from '../gemini-utils.js';
 
 // Load environment variables
 dotenv.config();
@@ -74,6 +74,58 @@ app.get('/api/bugs', async (req, res) => {
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch bugs data' });
+  }
+});
+
+// Get diagnosis for a specific bug by ID and set
+app.get('/api/diagnose-bug', async (req, res) => {
+  try {
+    const { id, set } = req.query;
+    
+    // Validate set parameter
+    if (!set) {
+      return res.status(400).json({ error: 'Set parameter is required (0, 1, 2, or 3)' });
+    }
+    
+    if (!validateSet(set)) {
+      return res.status(400).json({ error: 'Invalid set. Must be 0, 1, 2, or 3' });
+    }
+    
+    // Validate ID parameter
+    if (!id) {
+      return res.status(400).json({ error: 'Bug ID parameter is required' });
+    }
+    
+    const bugId = parseInt(id, 10);
+    if (isNaN(bugId)) {
+      return res.status(400).json({ error: 'Bug ID must be a valid number' });
+    }
+    
+    // Read bugs data from specified set
+    const data = await readBugsData(set);
+    
+    // Find the bug with the specified ID
+    const bug = data.bugs.find(b => b.id === bugId);
+    
+    if (!bug) {
+      return res.status(404).json({ error: `Bug with ID ${bugId} not found in set ${set}` });
+    }
+    
+    // Return the diagnosis information for the specific bug
+    const diagnosis = {
+      diagnosis: bug?.diagnosis
+    };
+
+    try {
+      diagnosis.diagnosis = await geminiDiagnosis(bug);
+    } catch (error) {
+      console.error('Error adding AI diagnosis:', error);
+    }
+
+    res.json(diagnosis);
+  } catch (error) {
+    console.error('Error fetching bug diagnosis:', error);
+    res.status(500).json({ error: 'Failed to fetch bug diagnosis' });
   }
 });
 

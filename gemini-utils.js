@@ -22,13 +22,25 @@ function initializeGemini() {
  * @param {string} model - The model to use (default: "gemini-2.0-flash-exp")
  * @returns {Promise<string>} - The generated response text
  */
-export async function generateContent(prompt, model = "gemini-2.0-flash-exp") {
+export async function generateContent(systemPrompt, userPrompt, model = "gemini-2.5-flash") {
   try {
     const ai = initializeGemini();
     
     const response = await ai.models.generateContent({
       model: model,
-      contents: prompt,
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: userPrompt
+            }
+          ]
+        }
+      ],
+      config: {
+        systemInstruction: systemPrompt
+      }
     });
     
     return response.text;
@@ -68,4 +80,19 @@ async function main() {
 // Run main function if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();
+}
+
+
+export async function geminiDiagnosis(bug) {
+  const systemPrompt = `
+  You are an expert QA engineer for web scrapers.
+  You need to diagnose the bug and provide a diagnosis.
+  You are given a bug and a set of logs.
+  Keep the diagnosises short and concise.
+  The diagnosis must not contain the exact logs or diagnosis steps.
+  Do not output in JSON, the diagnosis should just be a few sentences at most.
+  `;
+
+  const response = await generateContent(systemPrompt, JSON.stringify(bug));
+  return response;
 }
