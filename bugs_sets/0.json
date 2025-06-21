@@ -26,7 +26,7 @@
           "[11:16:00.311] [INFO] Scrape complete for product ID 790",
           "[11:16:00.312] [SUCCESS] Data saved cleanly with no interceptor conflict"
         ],
-        "analysis": "The race condition is caused by multiple interceptors attempting to parse and save the same response. The solution is to ensure that only one interceptor can parse and save the response for a given request ID.",
+        "diagnosis": "The race condition is caused by multiple interceptors attempting to parse and save the same response. The solution is to ensure that only one interceptor can parse and save the response for a given request ID.",
         "diagnosis_steps": [
           {
             "name": "Analyzing logs",
@@ -61,7 +61,7 @@
           "[09:13:00] Found: In Stock",
           "[09:13:01] Scrape successful"
         ],
-        "analysis": "The scrape consistently succeeds in the morning but fails around 8 PM. The logs suggest the .stock-status element takes too long to appear during high-traffic hours \u2014 a race condition triggered by slow page loads or network congestion.",
+        "diagnosis": "The scrape consistently succeeds in the morning but fails around 8 PM. The logs suggest the .stock-status element takes too long to appear during high-traffic hours \u2014 a race condition triggered by slow page loads or network congestion.",
         "diagnosis_steps": [
           {
             "name": "Analyzing logs",
@@ -96,7 +96,7 @@
           "[09:13:01] Found: In Stock",
           "[09:13:02] Scrape successful"
         ],
-        "analysis": "IP address 104.21.33.10 is being throttled by the server. Try using a load balancer to distribute requests across more IP addresses.",
+        "diagnosis": "IP address 104.21.33.10 is being throttled by the server. Try using a load balancer to distribute requests across more IP addresses.",
         "diagnosis_steps": [
           {
             "name": "Analyzing logs",
@@ -131,7 +131,7 @@
           "[13:05:03] Found price: $74.50",
           "[13:05:04] Scrape successful"
         ],
-        "analysis": "The page occasionally takes longer than expected to render key elements. Increasing the timeout from 3s to 5s (or using a more reliable wait condition like `networkidle`) can resolve this issue.",
+        "diagnosis": "The page occasionally takes longer than expected to render key elements. Increasing the timeout from 3s to 5s (or using a more reliable wait condition like `networkidle`) can resolve this issue.",
         "diagnosis_steps": [
           {
             "name": "Analyzing logs",

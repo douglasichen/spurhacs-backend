@@ -1,0 +1,372 @@
+{
+  "bugs": [
+    {
+      "id": 1,
+      "name": "Browser fingerprinting detection",
+      "bad": [
+        "[19:15:22] Initializing browser with standard fingerprint",
+        "[19:15:23] Canvas fingerprint: 7a8b9c2d...",
+        "[19:15:24] WebGL fingerprint: 4f5e6d7c...",
+        "[19:15:25] Navigating to /products/gaming-laptops",
+        "[19:15:26] Fingerprint analysis triggered",
+        "[19:15:27] ERROR: Bot detection activated",
+        "[19:15:28] Redirected to /blocked-access",
+        "[19:15:29] Scraping session terminated"
+      ],
+      "good": [
+        "[08:30:45] Initializing browser with randomized fingerprint",
+        "[08:30:46] Canvas fingerprint: 9x1y2z3a...",
+        "[08:30:47] WebGL fingerprint: 8w7v6u5t...",
+        "[08:30:48] Navigating to /products/gaming-laptops",
+        "[08:30:49] Fingerprint passed validation",
+        "[08:30:50] Found 32 gaming laptops",
+        "[08:30:55] Data extraction successful"
+      ],
+      "diagnosis": "Advanced fingerprinting techniques detect automated browsers by analyzing canvas rendering, WebGL capabilities, and other browser characteristics. Static fingerprints are flagged as non-human, requiring dynamic fingerprint rotation.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Progressive web app offline mode interference",
+      "bad": [
+        "[16:22:10] Navigating to PWA: /app/inventory",
+        "[16:22:11] Service worker active: sw-v2.1.3",
+        "[16:22:12] Network connectivity: intermittent",
+        "[16:22:13] PWA switched to offline mode",
+        "[16:22:14] Serving cached data from IndexedDB",
+        "[16:22:15] ERROR: Stale inventory data (48 hours old)",
+        "[16:22:16] Real-time prices unavailable",
+        "[16:22:17] Scrape failed: outdated information"
+      ],
+      "good": [
+        "[10:45:30] Navigating to PWA: /app/inventory",
+        "[10:45:31] Service worker active: sw-v2.1.3",
+        "[10:45:32] Network connectivity: stable",
+        "[10:45:33] PWA operating in online mode",
+        "[10:45:34] Fetching fresh data from API",
+        "[10:45:35] Real-time inventory loaded",
+        "[10:45:38] Current prices extracted successfully"
+      ],
+      "diagnosis": "Progressive Web Apps automatically switch to offline mode during network instability, serving cached data instead of fresh content. This causes scrapers to extract outdated information without realizing the data staleness.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Dynamic CSS class name obfuscation",
+      "bad": [
+        "[13:40:15] Waiting for product price element: .price-display",
+        "[13:40:20] Timeout: .price-display not found",
+        "[13:40:21] Scanning for alternative selectors...",
+        "[13:40:22] Found obfuscated class: .a7x9k2m",
+        "[13:40:23] Class name changed from previous scrape",
+        "[13:40:24] ERROR: Selector mapping outdated",
+        "[13:40:25] Price extraction failed"
+      ],
+      "good": [
+        "[09:20:33] Waiting for product price element: .price-display",
+        "[09:20:34] Found price: $299.99",
+        "[09:20:35] Class name stable: .price-display",
+        "[09:20:36] Price extraction successful"
+      ],
+      "diagnosis": "Websites dynamically obfuscate CSS class names to prevent automated scraping. Class names are regenerated on each deployment, breaking scrapers that rely on static selectors. Requires adaptive selector strategies.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Content Security Policy blocking script injection",
+      "bad": [
+        "[11:55:40] Attempting to inject data extraction script",
+        "[11:55:41] Script content: 'return document.querySelectorAll...'",
+        "[11:55:42] CSP violation detected",
+        "[11:55:43] ERROR: Refused to execute inline script",
+        "[11:55:44] CSP directive: script-src 'self'",
+        "[11:55:45] Script injection blocked",
+        "[11:55:46] Fallback to DOM parsing failed"
+      ],
+      "good": [
+        "[08:12:20] Attempting to inject data extraction script",
+        "[08:12:21] Script content: 'return document.querySelectorAll...'",
+        "[08:12:22] Script executed successfully",
+        "[08:12:23] Extracted 156 product elements",
+        "[08:12:24] Data collection completed"
+      ],
+      "diagnosis": "Strict Content Security Policies prevent script injection techniques commonly used by scrapers. The CSP blocks inline script execution, forcing reliance on less efficient DOM parsing methods that may miss dynamic content.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Machine learning based behavioral analysis",
+      "bad": [
+        "[14:30:12] Session started: user_session_789",
+        "[14:30:13] Mouse movement pattern: linear_trajectory",
+        "[14:30:14] Click timing: precise_intervals",
+        "[14:30:15] Scroll behavior: constant_velocity",
+        "[14:30:16] ML model confidence: 0.97 (bot detected)",
+        "[14:30:17] Behavioral analysis failed",
+        "[14:30:18] Access restricted: suspicious activity",
+        "[14:30:19] Session terminated"
+      ],
+      "good": [
+        "[10:15:45] Session started: user_session_456",
+        "[10:15:46] Mouse movement pattern: natural_curves",
+        "[10:15:47] Click timing: human_variance",
+        "[10:15:48] Scroll behavior: irregular_pauses",
+        "[10:15:49] ML model confidence: 0.23 (human likely)",
+        "[10:15:50] Behavioral analysis passed",
+        "[10:15:51] Full site access granted"
+      ],
+      "diagnosis": "Advanced ML models analyze user behavior patterns including mouse movements, click timing, and scroll patterns to detect automation. Perfect timing and linear movements trigger bot detection algorithms with high confidence scores.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "GraphQL query complexity limiting",
+      "bad": [
+        "[17:45:30] Constructing GraphQL query for product data",
+        "[17:45:31] Query depth: 8 levels",
+        "[17:45:32] Requested fields: 47 total",
+        "[17:45:33] Sending query to /graphql endpoint",
+        "[17:45:34] ERROR: Query complexity exceeds limit (max: 1000, actual: 1247)",
+        "[17:45:35] Query rejected by complexity analyzer",
+        "[17:45:36] Data fetch failed"
+      ],
+      "good": [
+        "[12:20:15] Constructing GraphQL query for product data",
+        "[12:20:16] Query depth: 4 levels",
+        "[12:20:17] Requested fields: 23 total",
+        "[12:20:18] Sending query to /graphql endpoint",
+        "[12:20:19] Query complexity: 687 (within limits)",
+        "[12:20:20] Query executed successfully",
+        "[12:20:22] Product data retrieved"
+      ],
+      "diagnosis": "GraphQL endpoints implement query complexity analysis to prevent resource exhaustion. Deep nested queries or requests for too many fields simultaneously exceed complexity thresholds, requiring query optimization or batching strategies.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Time-based access control restrictions",
+      "bad": [
+        "[02:15:33] Current time: 02:15 UTC",
+        "[02:15:34] Attempting to access /api/products",
+        "[02:15:35] Server time validation: maintenance window active",
+        "[02:15:36] Access restricted: 02:00-04:00 UTC",
+        "[02:15:37] ERROR: Service temporarily unavailable",
+        "[02:15:38] Maintenance mode detected",
+        "[02:15:39] Scraping suspended"
+      ],
+      "good": [
+        "[14:30:22] Current time: 14:30 UTC",
+        "[14:30:23] Attempting to access /api/products",
+        "[14:30:24] Server time validation: normal operation",
+        "[14:30:25] Access granted: business hours",
+        "[14:30:26] API responding normally",
+        "[14:30:27] Product data available"
+      ],
+      "diagnosis": "Websites implement time-based access controls that restrict API access during maintenance windows or off-business hours. Scrapers running during these periods encounter service unavailability without clear error messaging.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Resource exhaustion from concurrent requests",
+      "bad": [
+        "[15:20:10] Initiating concurrent scraping: 50 threads",
+        "[15:20:11] Thread pool: 50/50 active",
+        "[15:20:15] Memory usage: 4.2GB (85% capacity)",
+        "[15:20:18] CPU usage: 98% sustained",
+        "[15:20:22] Network connections: 847/1000 limit",
+        "[15:20:25] FATAL: System resource exhaustion",
+        "[15:20:26] Thread pool collapsed",
+        "[15:20:27] Scraping operation failed"
+      ],
+      "good": [
+        "[11:45:30] Initiating concurrent scraping: 20 threads",
+        "[11:45:31] Thread pool: 20/50 capacity",
+        "[11:45:35] Memory usage: 2.1GB (42% capacity)",
+        "[11:45:38] CPU usage: 65% average",
+        "[11:45:42] Network connections: 234/1000 limit",
+        "[11:45:45] Resource utilization optimal",
+        "[11:45:48] Scraping completed successfully"
+      ],
+      "diagnosis": "Excessive concurrent requests overwhelm system resources, causing memory exhaustion, CPU saturation, and network connection limits. The scraper becomes unstable and fails when resource consumption exceeds system capacity.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "DNS over HTTPS interference",
+      "bad": [
+        "[18:33:45] Resolving domain: api.target-site.com",
+        "[18:33:46] DNS-over-HTTPS provider: Cloudflare",
+        "[18:33:47] DoH query encrypted and sent",
+        "[18:33:50] DNS resolution timeout (3000ms)",
+        "[18:33:51] Fallback to system DNS failed",
+        "[18:33:52] ERROR: Domain resolution failed",
+        "[18:33:53] Network connectivity lost",
+        "[18:33:54] Scraping aborted"
+      ],
+      "good": [
+        "[09:22:15] Resolving domain: api.target-site.com",
+        "[09:22:16] DNS-over-HTTPS provider: Google",
+        "[09:22:17] DoH query encrypted and sent",
+        "[09:22:18] DNS resolution successful (1.2s)",
+        "[09:22:19] IP address: 104.21.45.67",
+        "[09:22:20] Connection established",
+        "[09:22:21] Scraping initiated"
+      ],
+      "diagnosis": "DNS-over-HTTPS configurations can cause resolution failures when DoH providers are unreachable or slow. Different DoH providers have varying reliability, and fallback mechanisms may not work properly, blocking access to target sites.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    }
+  ]
+}

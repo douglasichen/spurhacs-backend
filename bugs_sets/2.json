@@ -1,0 +1,328 @@
+{
+  "bugs": [
+    {
+      "id": 1,
+      "name": "Webhook timeout causing data loss",
+      "bad": [
+        "[16:45:12] Webhook endpoint: /api/scrape-complete",
+        "[16:45:13] Processing 1,247 scraped products",
+        "[16:45:14] Sending webhook payload (2.3MB)",
+        "[16:45:19] Webhook timeout after 5000ms",
+        "[16:45:19] ERROR: Webhook delivery failed",
+        "[16:45:20] Retrying webhook delivery...",
+        "[16:45:25] Second timeout after 5000ms",
+        "[16:45:25] CRITICAL: Data lost, no backup mechanism"
+      ],
+      "good": [
+        "[10:22:30] Webhook endpoint: /api/scrape-complete",
+        "[10:22:31] Processing 847 scraped products",
+        "[10:22:32] Sending webhook payload (1.8MB)",
+        "[10:22:34] Webhook delivered successfully (2.1s)",
+        "[10:22:34] Response: 200 OK",
+        "[10:22:35] Data processing confirmed by receiver"
+      ],
+      "diagnosis": "Large webhook payloads are timing out during peak processing periods. The receiving endpoint cannot handle the data volume within the timeout window, and there's no fallback mechanism to preserve the scraped data.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Dynamic content loading race condition",
+      "bad": [
+        "[14:33:45] Navigating to /category/electronics",
+        "[14:33:46] Initial page load complete",
+        "[14:33:47] Waiting for .product-list...",
+        "[14:33:48] Found 12 products (initial batch)",
+        "[14:33:49] Triggering infinite scroll...",
+        "[14:33:50] ERROR: Scroll event not triggering new content",
+        "[14:33:51] JavaScript execution context lost",
+        "[14:33:52] Scrape incomplete: missing 88 products"
+      ],
+      "good": [
+        "[09:15:22] Navigating to /category/electronics",
+        "[09:15:23] Initial page load complete",
+        "[09:15:24] Waiting for .product-list...",
+        "[09:15:25] Found 12 products (initial batch)",
+        "[09:15:26] Triggering infinite scroll...",
+        "[09:15:28] New content loaded: 24 additional products",
+        "[09:15:30] Scroll complete: 100 total products found"
+      ],
+      "diagnosis": "Infinite scroll mechanisms fail when the page's JavaScript context is disrupted by network latency or DOM manipulation timing. The scroll event listeners become detached, preventing additional content from loading.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Cookie consent blocking scraper access",
+      "bad": [
+        "[11:28:15] Navigating to /products/smartphones",
+        "[11:28:16] Page loaded with cookie consent modal",
+        "[11:28:17] Modal overlay blocking content access",
+        "[11:28:18] Attempting to click 'Accept All' button",
+        "[11:28:19] ERROR: Button click intercepted by modal",
+        "[11:28:20] Content remains inaccessible",
+        "[11:28:21] Scrape failed: no product data extracted"
+      ],
+      "good": [
+        "[08:45:33] Navigating to /products/smartphones",
+        "[08:45:34] Page loaded with cookie consent modal",
+        "[08:45:35] Successfully clicked 'Accept All' button",
+        "[08:45:36] Modal dismissed, content accessible",
+        "[08:45:37] Found 45 smartphone products",
+        "[08:45:42] All product data extracted successfully"
+      ],
+      "diagnosis": "Cookie consent modals intermittently prevent the scraper from accessing page content. The modal's z-index or event handling sometimes blocks interaction attempts, leaving the content inaccessible behind the overlay.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Geolocation-based content variation",
+      "bad": [
+        "[13:55:20] IP geolocation: Frankfurt, Germany",
+        "[13:55:21] Navigating to /pricing",
+        "[13:55:22] Content loaded in German language",
+        "[13:55:23] Prices displayed in EUR currency",
+        "[13:55:24] ERROR: Price parser expects USD format",
+        "[13:55:25] Regex pattern mismatch: €45,99 vs $45.99",
+        "[13:55:26] Data extraction failed"
+      ],
+      "good": [
+        "[10:12:45] IP geolocation: New York, USA",
+        "[10:12:46] Navigating to /pricing",
+        "[10:12:47] Content loaded in English language",
+        "[10:12:48] Prices displayed in USD currency",
+        "[10:12:49] Price parser successfully extracted: $45.99",
+        "[10:12:50] All pricing data captured correctly"
+      ],
+      "diagnosis": "The website serves different content based on IP geolocation, causing parsing failures when the scraper encounters unexpected formats. Currency symbols, decimal separators, and language variations break the extraction logic.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "WebSocket connection instability",
+      "bad": [
+        "[17:20:10] Establishing WebSocket connection for real-time updates",
+        "[17:20:11] WebSocket connected: ws://api.example.com/live",
+        "[17:20:15] Receiving price updates via WebSocket",
+        "[17:20:23] WebSocket connection lost unexpectedly",
+        "[17:20:24] Attempting reconnection...",
+        "[17:20:27] Reconnection failed: connection refused",
+        "[17:20:28] ERROR: Real-time data stream interrupted",
+        "[17:20:29] Falling back to polling (degraded performance)"
+      ],
+      "good": [
+        "[09:30:15] Establishing WebSocket connection for real-time updates",
+        "[09:30:16] WebSocket connected: ws://api.example.com/live",
+        "[09:30:20] Receiving price updates via WebSocket",
+        "[09:32:45] WebSocket heartbeat: connection stable",
+        "[09:35:12] Continuous data stream maintained",
+        "[09:37:30] Real-time scraping completed successfully"
+      ],
+      "diagnosis": "WebSocket connections become unstable during high-traffic periods or network congestion, causing real-time data streams to fail. The fallback polling mechanism creates performance degradation and potential data gaps.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Image lazy loading preventing data extraction",
+      "bad": [
+        "[15:42:18] Scraping product gallery: /product/laptop-xyz",
+        "[15:42:19] Found 8 image placeholders",
+        "[15:42:20] Waiting for images to load...",
+        "[15:42:25] Timeout: Images still showing placeholder URLs",
+        "[15:42:26] Lazy loading not triggered by scroll simulation",
+        "[15:42:27] ERROR: Product images unavailable",
+        "[15:42:28] Image analysis failed"
+      ],
+      "good": [
+        "[11:15:30] Scraping product gallery: /product/laptop-abc",
+        "[11:15:31] Found 8 image placeholders",
+        "[11:15:32] Simulating scroll to trigger lazy loading",
+        "[11:15:34] Images loaded successfully",
+        "[11:15:36] Extracted 8 high-resolution product images",
+        "[11:15:37] Image analysis completed"
+      ],
+      "diagnosis": "Lazy loading mechanisms fail to trigger when the scraper doesn't properly simulate user scroll behavior. Images remain as placeholder URLs, preventing visual analysis and data extraction from product galleries.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "A/B testing causing inconsistent page structure",
+      "bad": [
+        "[12:08:45] Navigating to /checkout/cart",
+        "[12:08:46] A/B test variant: experimental_layout_v2",
+        "[12:08:47] Waiting for .cart-total element...",
+        "[12:08:52] Timeout: .cart-total not found",
+        "[12:08:53] Page structure differs from expected layout",
+        "[12:08:54] ERROR: Cannot locate price elements",
+        "[12:08:55] Cart analysis failed"
+      ],
+      "good": [
+        "[12:05:20] Navigating to /checkout/cart",
+        "[12:05:21] A/B test variant: control_layout",
+        "[12:05:22] Waiting for .cart-total element...",
+        "[12:05:23] Found cart total: $127.99",
+        "[12:05:24] Successfully extracted all cart items",
+        "[12:05:25] Cart analysis completed"
+      ],
+      "diagnosis": "A/B testing frameworks randomly serve different page layouts with varying CSS selectors and DOM structures. The scraper fails when encountering experimental variants that don't match the expected element hierarchy.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Service worker caching stale responses",
+      "bad": [
+        "[14:25:33] Requesting fresh product data: /api/products/12345",
+        "[14:25:34] Service worker intercepted request",
+        "[14:25:35] Serving cached response from 6 hours ago",
+        "[14:25:36] Product price: $89.99 (stale data)",
+        "[14:25:37] WARNING: Price validation failed",
+        "[14:25:38] Expected current price: ~$120.00",
+        "[14:25:39] ERROR: Data freshness check failed"
+      ],
+      "good": [
+        "[09:40:15] Requesting fresh product data: /api/products/12345",
+        "[09:40:16] Service worker cache miss",
+        "[09:40:17] Fetching from origin server",
+        "[09:40:18] Product price: $119.99 (fresh data)",
+        "[09:40:19] Price validation passed",
+        "[09:40:20] Data freshness confirmed"
+      ],
+      "diagnosis": "Service workers aggressively cache API responses, serving stale data even when fresh information is required. Cache invalidation strategies fail during peak usage, leading to outdated product information being scraped.",
+      "diagnosis_steps": [
+        {
+          "name": "Analyzing logs",
+          "description": "From the existing logs, we can observe unusual behavior or failure points such as repeated requests, timeouts, or conflicting data being processed."
+        },
+        {
+          "name": "Adding logs",
+          "description": "To understand more about the root cause, I am adding additional logging around network requests, DOM element wait times, and internal logic handling to capture more context."
+        },
+        {
+          "name": "Analyzing logs",
+          "description": "The new logs show detailed timings, error codes, and decision branches that indicate where the problem is surfacing, helping to pinpoint whether it's timing, resource loading, or logic conflict."
+        },
+        {
+          "name": "Diagnosing",
+          "description": "After analyzing both the original and new logs from production, the root cause appears to be tied to a specific set of conditions such as race conditions, throttling, or slow-loading elements that require mitigation."
+        }
+      ]
+    }
+  ]
+}
