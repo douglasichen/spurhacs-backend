@@ -1,0 +1,30 @@
+{
+    "success": {
+        "metadata": {
+
+        },
+        "data": [
+            {
+                "timestamp": "2025-06-21T00:00:00Z",
+                "percent": 0.5
+            },
+            {
+                "timestamp": "2025-06-21T00:00:00Z",
+                "percent": 0.5
+            },
+            {
+                "timestamp": "2025-06-21T00:00:00Z",
+                "percent": 0.5
+            }
+        ]
+    },
+    "error": {
+        "metadata": {
+
+        },
+        "data": {
+            "timestamp": "2025-06-21T00:00:00Z",
+            "percent": 0.5
+        }
+    }
+}

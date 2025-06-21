@@ -138,6 +138,53 @@ spurhacks/
 └── README.md         # This file
 ```
 
+## Deployment
+
+### Vercel Deployment
+
+This project is configured for deployment on Vercel. You can deploy using either the automated script or manual commands:
+
+#### Option 1: Automated Deployment (Recommended)
+```bash
+./deploy.sh
+```
+
+#### Option 2: Manual Deployment
+
+1. Install Vercel CLI:
+   ```bash
+   npm i -g vercel
+   ```
+
+2. Login to Vercel:
+   ```bash
+   vercel login
+   ```
+
+3. Deploy to Vercel:
+   ```bash
+   vercel
+   ```
+
+4. For production deployment:
+   ```bash
+   vercel --prod
+   ```
+
+#### Environment Variables on Vercel
+
+Make sure to set up your environment variables in the Vercel dashboard:
+- Go to your project settings
+- Navigate to "Environment Variables"
+- Add any required variables from your `.env` file
+
+#### Vercel Configuration
+
+The project includes a `vercel.json` file that configures:
+- Node.js runtime for the Express server
+- Route handling for all API endpoints
+- Function timeout settings
+
 ## Contributing
 
 1. Fork the repository

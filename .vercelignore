@@ -1,0 +1,33 @@
+# Development dependencies
+node_modules
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Development files
+nodemon.json
+.vscode
+.idea
+
+# Logs
+*.log
+logs
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation (optional - remove if you want docs deployed)
+# README.md
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js

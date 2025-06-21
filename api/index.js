@@ -13,7 +13,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -22,7 +21,7 @@ app.use(express.json());
 // Helper function to read bugs data
 async function readBugsData() {
   try {
-    const data = await fs.readFile(path.join(__dirname, 'bugs.json'), 'utf8');
+    const data = await fs.readFile(path.join(__dirname, '../bugs.json'), 'utf8');
     return JSON.parse(data);
   } catch (error) {
     console.error('Error reading bugs data:', error);
@@ -47,11 +46,5 @@ app.get('/api/bugs', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🐛 Bugs API: http://localhost:${PORT}/api/bugs`);
-});
-
+// Export the Express app for Vercel
 export default app;
