@@ -11,4 +11,6 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🐛 Bugs API: http://localhost:${PORT}/api/bugs`);
+  console.log(`📈 All Graphs API: http://localhost:${PORT}/api/graphs`);
+  console.log(`📊 Graph by ID API: http://localhost:${PORT}/api/graph?id=1`);
 });
