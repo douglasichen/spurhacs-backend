@@ -92,7 +92,9 @@ export async function geminiDiagnosis(bug) {
   The diagnosis must not contain the exact logs or diagnosis steps.
   Do not output in JSON, the diagnosis should just be a few sentences at most.
   `;
-
+    delete bug['diagnosis']
+    delete bug['diagnosis_steps'][bug['diagnosis_steps'].length - 1]
+    console.log(bug)
   const response = await generateContent(systemPrompt, JSON.stringify(bug));
   return response;
 }
