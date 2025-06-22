@@ -3,6 +3,7 @@
     {
       "id": 1,
       "name": "Webhook timeout causing data loss",
+      "severity": "high",
       "bad": [
         "[16:45:12] Webhook endpoint: /api/scrape-complete",
         "[16:45:13] Processing 1,247 scraped products",
@@ -44,6 +45,7 @@
     {
       "id": 2,
       "name": "Dynamic content loading race condition",
+      "severity": "medium",
       "bad": [
         "[14:33:45] Navigating to /category/electronics",
         "[14:33:46] Initial page load complete",
@@ -86,6 +88,7 @@
     {
       "id": 3,
       "name": "Cookie consent blocking scraper access",
+      "severity": "medium",
       "bad": [
         "[11:28:15] Navigating to /products/smartphones",
         "[11:28:16] Page loaded with cookie consent modal",
@@ -126,6 +129,7 @@
     {
       "id": 4,
       "name": "Geolocation-based content variation",
+      "severity": "medium",
       "bad": [
         "[13:55:20] IP geolocation: Frankfurt, Germany",
         "[13:55:21] Navigating to /pricing",
@@ -166,6 +170,7 @@
     {
       "id": 5,
       "name": "WebSocket connection instability",
+      "severity": "medium",
       "bad": [
         "[17:20:10] Establishing WebSocket connection for real-time updates",
         "[17:20:11] WebSocket connected: ws://api.example.com/live",
@@ -207,6 +212,7 @@
     {
       "id": 6,
       "name": "Image lazy loading preventing data extraction",
+      "severity": "medium",
       "bad": [
         "[15:42:18] Scraping product gallery: /product/laptop-xyz",
         "[15:42:19] Found 8 image placeholders",
@@ -247,6 +253,7 @@
     {
       "id": 7,
       "name": "A/B testing causing inconsistent page structure",
+      "severity": "medium",
       "bad": [
         "[12:08:45] Navigating to /checkout/cart",
         "[12:08:46] A/B test variant: experimental_layout_v2",
@@ -287,6 +294,7 @@
     {
       "id": 8,
       "name": "Service worker caching stale responses",
+      "severity": "medium",
       "bad": [
         "[14:25:33] Requesting fresh product data: /api/products/12345",
         "[14:25:34] Service worker intercepted request",
