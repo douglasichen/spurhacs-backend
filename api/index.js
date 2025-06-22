@@ -147,18 +147,18 @@ app.get('/api/graph', async (req, res) => {
     if (!id) {
       return res.status(400).json({ error: 'ID parameter is required' });
     }
-    
+
     const graphId = parseInt(id, 10);
     if (isNaN(graphId)) {
       return res.status(400).json({ error: 'ID must be a valid number' });
     }
-    
+
     // Read graph data from specified set
     const data = await readGraphData(set);
-    
+
     // Find the graph with the specified ID
     const graph = data.graphs.find(g => g.id === graphId);
-    
+
     if (!graph) {
       return res.status(404).json({ error: `Graph with ID ${graphId} not found in set ${set}` });
     }
